@@ -1,1 +1,62 @@
-<!DOCTYPE html><html><head><title>TashanWin Tracker</title></head><body><div id='root'></div><script src='index.js'></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TashanWin Tracker</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 28px;
+      color: #0f0;
+      margin-bottom: 20px;
+    }
+    .box {
+      background: #222;
+      border: 2px solid #444;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 0 10px #0f0;
+    }
+    .prediction {
+      font-size: 20px;
+      margin-top: 15px;
+    }
+    .btn {
+      margin-top: 20px;
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to TashanWin Tracker</h1>
+  <div class="box">
+    <h2>Prediction Panel</h2>
+    <p class="prediction">Next Colour: <strong id="color">Red</strong></p>
+    <button class="btn" onclick="changeColor()">Predict Again</button>
+  </div>
+
+  <script>
+    function changeColor() {
+      const colors = ['Red', 'Green', 'Violet'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      document.getElementById('color').textContent = randomColor;
+    }
+  </script>
+</body>
+</html>
