@@ -2,61 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TashanWin Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MrPerfect Color Trading Game</title>
   <style>
     body {
-      background-color: #111;
-      color: #fff;
       font-family: 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: white;
       text-align: center;
-      padding: 30px;
+      padding: 20px;
     }
     h1 {
-      font-size: 28px;
-      color: #0f0;
-      margin-bottom: 20px;
-    }
-    .box {
-      background: #222;
-      border: 2px solid #444;
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      margin: 0 auto;
-      box-shadow: 0 0 10px #0f0;
-    }
-    .prediction {
-      font-size: 20px;
-      margin-top: 15px;
+      color: #00f0ff;
+      text-shadow: 0 0 10px #00f0ff;
     }
     .btn {
-      margin-top: 20px;
-      background: #0f0;
-      color: #000;
+      padding: 15px 30px;
+      margin: 10px;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 10px;
       cursor: pointer;
+      box-shadow: 0 0 10px #000;
+    }
+    .red { background: #ff3c3c; color: white; }
+    .green { background: #3cff6b; color: black; }
+    .violet { background: violet; color: black; }
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #111;
+      box-shadow: 0 0 10px #222;
+    }
+    #timer {
+      font-size: 24px;
+      color: #00f0ff;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to TashanWin Tracker</h1>
-  <div class="box">
-    <h2>Prediction Panel</h2>
-    <p class="prediction">Next Colour: <strong id="color">Red</strong></p>
-    <button class="btn" onclick="changeColor()">Predict Again</button>
+
+  <h1>🎮 MrPerfect Color Trading Game</h1>
+
+  <div id="timer">⏳ 60</div>
+
+  <div>
+    <button class="btn red" onclick="makeChoice('Red')">Red</button>
+    <button class="btn green" onclick="makeChoice('Green')">Green</button>
+    <button class="btn violet" onclick="makeChoice('Violet')">Violet</button>
+  </div>
+
+  <div class="result-box">
+    <p><strong>Your Choice:</strong> <span id="yourChoice">--</span></p>
+    <p><strong>Game Result:</strong> <span id="gameResult">--</span></p>
+    <p><strong>Result:</strong> <span id="winStatus">--</span></p>
+    <p>✅ Wins: <span id="wins">0</span> | ❌ Losses: <span id="losses">0</span></p>
   </div>
 
   <script>
-    function changeColor() {
-      const colors = ['Red', 'Green', 'Violet'];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      document.getElementById('color').textContent = randomColor;
+    let wins = 0;
+    let losses = 0;
+    let choice = "";
+    let timeLeft = 60;
+
+    function makeChoice(color) {
+      choice = color;
+      document.getElementById('yourChoice').innerText = color;
     }
+
+    function startTimer() {
+      const timerDisplay = document.getElementById('timer');
+      const interval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.innerText = `⏳ ${timeLeft}`;
+        if (timeLeft === 0) {
+          clearInterval(interval);
+          playRound();
+          timeLeft = 60;
+          setTimeout(startTimer, 1000); // restart next round
+        }
+      }, 1000);
+    }
+
+    function getRandomColor() {
+      const colors = ['Red', 'Green', 'Violet'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function playRound() {
+      const result = getRandomColor();
+      document.getElementById('gameResult').innerText = result;
+
+      if (choice === "") {
+        document.getElementById('winStatus').innerText = "No Choice Selected!";
+        return;
+      }
+
+      if (choice === result) {
+        document.getElementById('winStatus').innerText = "🎉 You Win!";
+        wins++;
+      } else {
+        document.getElementById('winStatus').innerText = "😢 You Lose!";
+        losses++;
+      }
+
+      document.getElementById('wins').innerText = wins;
+      document.getElementById('losses').innerText = losses;
+      document.getElementById('yourChoice').innerText = "--";
+      choice = "";
+    }
+
+    // Start timer on load
+    startTimer();
   </script>
 </body>
 </html>
