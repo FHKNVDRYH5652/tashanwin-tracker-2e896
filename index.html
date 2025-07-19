@@ -1,205 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>Mr Perfect Mines Hack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>💫 Kuch Bhi Ho Sakta Hai 💫</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
+      font-family: 'Baloo 2', cursive;
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #000000, #1f1f1f);
-      color: #00ffc3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding-top: 40px;
-      overflow-x: hidden;
+      padding: 0;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
     }
-
-    h1 {
-      font-size: 32px;
-      text-shadow: 0 0 10px #00ffc3;
+    header {
+      text-align: center;
+      padding: 60px 20px;
+      background: #111;
+      background-image: radial-gradient(circle, #333 0%, #111 100%);
     }
-
-    .access-screen, .main-app {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      animation: fadeIn 0.8s ease;
+    header h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
     }
-
-    .access-screen.active, .main-app.active {
-      display: flex;
+    header p {
+      font-size: 1.3em;
+      color: #ccc;
     }
-
-    .form {
-      margin-top: 20px;
-      background: #121212;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #00ffc360;
+    .chapter {
+      max-width: 800px;
+      margin: 40px auto;
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      transition: 0.3s;
     }
-
-    label, select, input {
-      display: block;
-      margin: 10px 0;
-      font-size: 16px;
+    .chapter:hover {
+      transform: scale(1.01);
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
-
-    input, select {
-      padding: 8px;
-      width: 200px;
-      border-radius: 6px;
-      border: none;
-      background: #1f1f1f;
-      color: #00ffc3;
-      box-shadow: inset 0 0 5px #00ffc360;
+    .chapter h2 {
+      font-size: 2em;
+      margin-bottom: 15px;
+      color: #ffcc70;
     }
-
-    button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #00ffc3;
-      color: #000;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px #00ffc3;
+    .chapter p {
+      font-size: 1.2em;
+      line-height: 1.8em;
     }
-
-    button:hover {
-      background: #00cca0;
-      box-shadow: 0 0 20px #00ffc3;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(5, 60px);
-      gap: 12px;
-      margin-top: 30px;
-    }
-
-    .box {
-      width: 60px;
-      height: 60px;
-      background: #1a1a1a;
-      border: 2px solid #00ffc330;
-      border-radius: 8px;
-      color: #00ffc3;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      box-shadow: 0 0 5px #00ffc360;
-    }
-
-    .safe {
-      background-color: #00ffc3;
-      color: #000;
-      font-weight: bold;
-      box-shadow: 0 0 15px #00ffc3;
-    }
-
-    .legend {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #aaa;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: #000;
+      color: #777;
+      font-size: 1em;
     }
   </style>
 </head>
 <body>
 
-  <div class="access-screen active" id="accessScreen">
-    <h1>Mr Perfect Mines Hack 🔐</h1>
-    <div class="form">
-      <label>Enter Access Key:</label>
-      <input type="password" id="accessKey" placeholder="Enter Key">
-      <button onclick="checkKey()">Unlock</button>
-    </div>
+  <header>
+    <h1>💫 Kuch Bhi Ho Sakta Hai 💫</h1>
+    <p>Ek Soch Jo Duniya Badal Sakti Hai</p>
+  </header>
+
+  <div class="chapter">
+    <h2>Chapter 1: Jab Kuch Bhi Nahi Tha</h2>
+    <p>Universe ke shuru hone se pehle kya tha? Kya wahaan khaliapan tha ya kuch aur dimensions? Yeh soch bhi ek anant loop jaisa hai.</p>
   </div>
 
-  <div class="main-app" id="mainApp">
-    <h1>🎯 Mr Perfect Mines Hack</h1>
-
-    <div class="form">
-      <label>Mines Count:</label>
-      <select id="minesCount">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3" selected>3</option>
-        <option value="5">5</option>
-        <option value="7">7</option>
-      </select>
-
-      <label>Boxes to Open:</label>
-      <input type="number" id="boxesToOpen" min="1" max="24" value="10">
-
-      <button onclick="generateSafeBoxes()">Predict Safe Boxes</button>
-    </div>
-
-    <div class="grid" id="grid"></div>
-    <div class="legend">🟩 Green = Predicted Safe Boxes</div>
+  <div class="chapter">
+    <h2>Chapter 2: Big Bang - Kuch Se Sab</h2>
+    <p>Jab kuch tha hi nahi, tabhi ek energy point se sab kuch kaise shuru hua? Kya woh ek divine spark tha?</p>
   </div>
 
-  <script>
-    const correctKey = "mrperfect456";
+  <div class="chapter">
+    <h2>Chapter 3: Science ki Sachchai</h2>
+    <p>Science jo batata hai woh fact hota hai, lekin kya woh 100% sach hota hai? Kya hum sab kuch jante hai?</p>
+  </div>
 
-    function checkKey() {
-      const userKey = document.getElementById("accessKey").value;
-      if (userKey === correctKey) {
-        document.getElementById("accessScreen").classList.remove("active");
-        document.getElementById("mainApp").classList.add("active");
-      } else {
-        alert("❌ Incorrect Key. Please try again.");
-      }
-    }
+  <div class="chapter">
+    <h2>Chapter 4: Afterlife ka Rahasya</h2>
+    <p>Science afterlife ko prove nahi kar paayi, lekin kai logon ne near-death experiences report kiye hain. Kya yeh dusri duniya ka sanket hai?</p>
+  </div>
 
-    function generateSafeBoxes() {
-      const totalBoxes = 25;
-      const mines = parseInt(document.getElementById('minesCount').value);
-      const openCount = parseInt(document.getElementById('boxesToOpen').value);
-      const totalSafe = totalBoxes - mines;
+  <div class="chapter">
+    <h2>Chapter 5: Kya Koi Creator Hai?</h2>
+    <p>Universe itna perfect kaise ho sakta hai bina kisi intelligent design ke? Shayad koi creator hai jo is sabko dekh raha hai.</p>
+  </div>
 
-      if (openCount > totalSafe) {
-        alert("❗ You can't open more boxes than available safe ones.");
-        return;
-      }
+  <div class="chapter">
+    <h2>Chapter 6: Har Cheez Possible Hai</h2>
+    <p>Infinite possibilities ka matlab hai har idea ek reality ho sakta hai — ek alag dimension mein, ek alag universe mein.</p>
+  </div>
 
-      const grid = document.getElementById("grid");
-      grid.innerHTML = "";
+  <div class="chapter">
+    <h2>Chapter 7: Dimensions aur Parallel Universes</h2>
+    <p>Jaise hum teen dimensions jante hai, waise hi aur bhi ho sakte hai — jahaan time slow ya fast ho, ya sab kuch ulta ho.</p>
+  </div>
 
-      const safeBoxes = [];
-      while (safeBoxes.length < openCount) {
-        const rand = Math.floor(Math.random() * totalBoxes);
-        if (!safeBoxes.includes(rand)) {
-          safeBoxes.push(rand);
-        }
-      }
+  <div class="chapter">
+    <h2>Chapter 8: Magic ya Advanced Science?</h2>
+    <p>Jo aaj magic lagta hai, shayad future ka science ho. Kya teleportation, time travel, aur mind reading sach ho sakte hai?</p>
+  </div>
 
-      for (let i = 0; i < totalBoxes; i++) {
-        const box = document.createElement("div");
-        box.className = "box";
-        box.textContent = i + 1;
-        if (safeBoxes.includes(i)) {
-          box.classList.add("safe");
-        }
-        grid.appendChild(box);
-      }
-    }
-  </script>
+  <div class="chapter">
+    <h2>Chapter 9: Insaan ka Consciousness</h2>
+    <p>Hamari soch, hamare dreams, aur imagination — yeh sab ek universal energy se jude ho sakte hain. Kya hum sab ek network ka part hai?</p>
+  </div>
+
+  <div class="chapter">
+    <h2>Chapter 10: Antim Sachchai</h2>
+    <p>Shayad sab kuch illusion hai — ya sab kuch real hai. Shayad hum ek simulation mein hain. Ya fir hum khud apne reality ke creator hain.</p>
+  </div>
+
+  <footer>
+    <p>Antim Shabd: 💭 "Sochne Wale Ki Soch Hi Uska Universe Hai." <br> by Shakti</p>
+  </footer>
 
 </body>
 </html>
