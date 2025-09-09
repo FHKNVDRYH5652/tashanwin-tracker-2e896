@@ -1,123 +1,98 @@
-<!DOCTYPE html>
-<html lang="hi">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>💫 Kuch Bhi Ho Sakta Hai 💫</title>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Baloo 2', cursive;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: #fff;
-    }
-    header {
-      text-align: center;
-      padding: 60px 20px;
-      background: #111;
-      background-image: radial-gradient(circle, #333 0%, #111 100%);
-    }
-    header h1 {
-      font-size: 3em;
-      margin-bottom: 10px;
-    }
-    header p {
-      font-size: 1.3em;
-      color: #ccc;
-    }
-    .chapter {
-      max-width: 800px;
-      margin: 40px auto;
-      background: rgba(255,255,255,0.05);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      transition: 0.3s;
-    }
-    .chapter:hover {
-      transform: scale(1.01);
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    }
-    .chapter h2 {
-      font-size: 2em;
-      margin-bottom: 15px;
-      color: #ffcc70;
-    }
-    .chapter p {
-      font-size: 1.2em;
-      line-height: 1.8em;
-    }
-    footer {
-      text-align: center;
-      padding: 30px;
-      background: #000;
-      color: #777;
-      font-size: 1em;
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Loss Recover — Admin Panel</title>
+<style>
+  body{margin:0;font-family:Inter,Segoe UI,Arial;background:#071022;color:#f0f6ff}
+  header{padding:16px;text-align:center;background:#0f1724;font-weight:700;font-size:1.2rem}
+  .wrap{max-width:800px;margin:18px auto;padding:12px}
+  .card{background:#0f1724;border-radius:12px;padding:16px;margin-bottom:14px}
+  .btn{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:700}
+  .btn.approve{background:linear-gradient(90deg,#00d2a8,#00a6ff);color:#012}
+  .btn.reject{background:#444;color:#fff}
+  .small{color:#9fb0d6;font-size:0.9rem}
+  .row{display:flex;justify-content:space-between;align-items:center;margin:6px 0;padding:8px;border-radius:8px;background:rgba(255,255,255,0.03)}
+</style>
 </head>
 <body>
+<header>Loss Recover — Admin Panel</header>
+<div class="wrap">
 
-  <header>
-    <h1>💫 Kuch Bhi Ho Sakta Hai 💫</h1>
-    <p>Ek Soch Jo Duniya Badal Sakti Hai</p>
-  </header>
-
-  <div class="chapter">
-    <h2>Chapter 1: Jab Kuch Bhi Nahi Tha</h2>
-    <p>Universe ke shuru hone se pehle kya tha? Kya wahaan khaliapan tha ya kuch aur dimensions? Yeh soch bhi ek anant loop jaisa hai.</p>
+  <div class="card">
+    <h3>Pending UTR Requests</h3>
+    <div id="pendingList"></div>
   </div>
 
-  <div class="chapter">
-    <h2>Chapter 2: Big Bang - Kuch Se Sab</h2>
-    <p>Jab kuch tha hi nahi, tabhi ek energy point se sab kuch kaise shuru hua? Kya woh ek divine spark tha?</p>
+  <div class="card">
+    <h3>Approved Records</h3>
+    <div id="approvedList"></div>
   </div>
 
-  <div class="chapter">
-    <h2>Chapter 3: Science ki Sachchai</h2>
-    <p>Science jo batata hai woh fact hota hai, lekin kya woh 100% sach hota hai? Kya hum sab kuch jante hai?</p>
-  </div>
+</div>
 
-  <div class="chapter">
-    <h2>Chapter 4: Afterlife ka Rahasya</h2>
-    <p>Science afterlife ko prove nahi kar paayi, lekin kai logon ne near-death experiences report kiye hain. Kya yeh dusri duniya ka sanket hai?</p>
-  </div>
+<script>
+function loadPending(){
+  const list = document.getElementById('pendingList');
+  list.innerHTML = '';
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith('pending_')){
+      try{
+        const info = JSON.parse(localStorage.getItem(k));
+        const div = document.createElement('div');
+        div.className = 'row';
+        div.innerHTML = `
+          <div>
+            <div><b>UTR:</b> ${info.utr}</div>
+            <div class="small">Plan ₹${info.plan} | Deposit ₹${info.amount}</div>
+          </div>
+          <div>
+            <button class="btn approve" onclick="approve('${info.utr}', ${info.amount}, ${info.plan})">Approve</button>
+            <button class="btn reject" onclick="reject('${info.utr}')">Reject</button>
+          </div>
+        `;
+        list.appendChild(div);
+      }catch(e){}
+    }
+  }
+  if(list.innerHTML===''){ list.innerHTML = '<div class="small">No pending requests</div>'; }
+}
 
-  <div class="chapter">
-    <h2>Chapter 5: Kya Koi Creator Hai?</h2>
-    <p>Universe itna perfect kaise ho sakta hai bina kisi intelligent design ke? Shayad koi creator hai jo is sabko dekh raha hai.</p>
-  </div>
+function loadApproved(){
+  const box = document.getElementById('approvedList');
+  box.innerHTML = '';
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith('approved_')){
+      try{
+        const info = JSON.parse(localStorage.getItem(k));
+        const div = document.createElement('div');
+        div.className = 'row';
+        div.innerHTML = `<div><b>UTR:</b> ${info.utr}</div>
+                         <div class="small">Plan ₹${info.plan} | Deposit ₹${info.amount}</div>`;
+        box.appendChild(div);
+      }catch(e){}
+    }
+  }
+  if(box.innerHTML===''){ box.innerHTML = '<div class="small">No approvals yet</div>'; }
+}
 
-  <div class="chapter">
-    <h2>Chapter 6: Har Cheez Possible Hai</h2>
-    <p>Infinite possibilities ka matlab hai har idea ek reality ho sakta hai — ek alag dimension mein, ek alag universe mein.</p>
-  </div>
+function approve(utr, amount, plan){
+  const data = {utr: utr, amount: amount, plan: plan, ts: Date.now()};
+  localStorage.setItem('approved_' + utr, JSON.stringify(data));
+  localStorage.removeItem('pending_' + utr);
+  alert('Approved UTR ' + utr);
+  loadPending(); loadApproved();
+}
+function reject(utr){
+  localStorage.removeItem('pending_' + utr);
+  alert('Rejected UTR ' + utr);
+  loadPending();
+}
 
-  <div class="chapter">
-    <h2>Chapter 7: Dimensions aur Parallel Universes</h2>
-    <p>Jaise hum teen dimensions jante hai, waise hi aur bhi ho sakte hai — jahaan time slow ya fast ho, ya sab kuch ulta ho.</p>
-  </div>
-
-  <div class="chapter">
-    <h2>Chapter 8: Magic ya Advanced Science?</h2>
-    <p>Jo aaj magic lagta hai, shayad future ka science ho. Kya teleportation, time travel, aur mind reading sach ho sakte hai?</p>
-  </div>
-
-  <div class="chapter">
-    <h2>Chapter 9: Insaan ka Consciousness</h2>
-    <p>Hamari soch, hamare dreams, aur imagination — yeh sab ek universal energy se jude ho sakte hain. Kya hum sab ek network ka part hai?</p>
-  </div>
-
-  <div class="chapter">
-    <h2>Chapter 10: Antim Sachchai</h2>
-    <p>Shayad sab kuch illusion hai — ya sab kuch real hai. Shayad hum ek simulation mein hain. Ya fir hum khud apne reality ke creator hain.</p>
-  </div>
-
-  <footer>
-    <p>Antim Shabd: 💭 "Sochne Wale Ki Soch Hi Uska Universe Hai." <br> by Shakti</p>
-  </footer>
-
+document.addEventListener('DOMContentLoaded', ()=>{ loadPending(); loadApproved(); });
+</script>
 </body>
 </html>
