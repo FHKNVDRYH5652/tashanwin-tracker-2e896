@@ -3,77 +3,74 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sureshot — Dashboard · User · Access</title>
+<title>Sureshot — Dashboard · Payment · Access</title>
 <style>
   :root{--bg:#071022;--card:#0f1724;--muted:#9fb0d6;--accent1:#00d2a8;--accent2:#00a6ff;--success:#b8ffce;}
   body{margin:0;font-family:Inter,Segoe UI,Arial;background:linear-gradient(180deg,#061021,#07142a);color:#eaf6ff;overflow-x:hidden;}
-  header{padding:18px;text-align:center;font-weight:800;font-size:1.2rem;letter-spacing:0.4px;animation:fadeInDown 1s;}
+  header{padding:18px;text-align:center;font-weight:800;font-size:1.3rem;letter-spacing:0.4px;animation:fadeDown 1s;}
   .wrap{max-width:980px;margin:18px auto;padding:18px;animation:fadeIn 1s;}
   .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(0,0,0,0.5);transition:all 0.4s ease;}
   .card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,0.6);}
-  .hidden{display:none}
-  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
-  .plan{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);text-align:left;transition:0.3s}
-  .plan:hover{background:rgba(0,210,168,0.05);border:1px solid var(--accent1);}
-  .plan b{display:block;font-size:1.05rem}
+  .hidden{display:none;}
+  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;}
+  .plan{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);text-align:left;transition:0.3s;}
+  .plan:hover{background:rgba(0,210,168,0.05);}
+  .plan b{display:block;font-size:1.05rem;}
   .btn{padding:10px 14px;border-radius:9px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#012;font-weight:800;cursor:pointer;transition:0.3s;box-shadow:0 4px 10px rgba(0,0,0,0.5);}
   .btn:hover{transform:scale(1.05);}
   .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);}
-  input[type=text]{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;width:90%;text-align:center;margin-top:10px;transition:0.3s}
-  input[type=file]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;width:90%;margin-top:10px}
+  input[type=text]{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;width:90%;text-align:center;margin-top:10px;transition:0.3s;}
+  input[type=file]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;width:90%;margin-top:10px;}
   input:focus{border-color:var(--accent1);}
-  .qr{width:220px;height:220px;border-radius:12px;display:block;margin:8px auto;border:2px solid rgba(255,255,255,0.03);animation:fadeIn 1s;}
-  .status{margin-top:10px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);font-weight:700;transition:0.3s}
-  .small{color:var(--muted);font-size:0.95rem}
-  .history{margin-top:12px;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;max-height:260px;overflow:auto}
-  footer{padding:14px;text-align:center;color:var(--muted);font-size:0.9rem}
+  .qr{width:220px;height:220px;border-radius:12px;display:block;margin:12px auto;border:2px solid rgba(255,255,255,0.03);animation:fadeIn 1s;}
+  .status{margin-top:10px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);font-weight:700;transition:0.3s;}
+  .small{color:var(--muted);font-size:0.95rem;}
+  .history{margin-top:12px;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;max-height:260px;overflow:auto;}
+  footer{padding:14px;text-align:center;color:var(--muted);font-size:0.9rem;}
   /* animations */
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes progressAnim{from{width:0;}to{width:100%;}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
-<header>Sureshot — Dashboard · User · Access (All-in-One)</header>
+<header>Sureshot — Dashboard · Payment · Access</header>
 <div class="wrap">
 
   <!-- DASHBOARD -->
   <section id="screen-dashboard" class="card">
     <h2>Choose a Loss-Recovery Plan</h2>
-    <div class="small">Click a plan to go to payment. Deposit shown = 10% of plan (editable at request screen).</div>
+    <div class="small">Click a plan to go to payment. Deposit shown = 10% of plan.</div>
     <div class="plans" id="plansList"></div>
   </section>
 
-  <!-- USER / PAYMENT -->
+  <!-- PAYMENT SCREEN -->
   <section id="screen-user" class="card hidden">
     <button class="btn ghost" onclick="goDashboard()" style="float:right">Back</button>
-    <h2>Unlock — Pay & Upload Proof</h2>
-    <img id="qrImg" class="qr" alt="QR Code">
-    <div class="small">Scan this QR with any UPI app. Payment amount is collected automatically.</div>
+    <h2>Scan & Pay — Enter UTR & Screenshot</h2>
+    <img id="qrImg" class="qr" alt="UPI QR Code">
+    <div class="small">Scan this QR with UPI app. Amount collected automatically.</div>
 
     <div style="margin-top:12px">
-      <div class="small">Payable amount (deposit):</div>
+      <div class="small">Deposit amount:</div>
       <div id="userAmount" style="font-weight:800;font-size:1.3rem;margin-top:6px">₹0</div>
     </div>
 
     <input id="utrInput" type="text" maxlength="12" placeholder="Enter 12-digit UTR">
     <input id="screenshotInput" type="file" accept="image/*">
     <div style="margin-top:8px">
-      <button class="btn" id="confirmBtn" onclick="processPayment()">Confirm Payment</button>
+      <button class="btn" onclick="confirmPayment()">Confirm Payment</button>
     </div>
-
     <div id="paymentStatus" class="status hidden"></div>
   </section>
 
-  <!-- ACCESS (Hack panel) -->
+  <!-- ACCESS / HACK PANEL -->
   <section id="screen-access" class="card hidden">
-    <button class="btn ghost" onclick="goDashboard()" style="float:right">Home</button>
     <h2>Hack Panel — Prediction</h2>
     <p class="small">Target Range: <b id="targetRange"></b> | Balance: ₹<b id="balanceVal"></b></p>
 
-    <input id="periodInput" type="text" maxlength="3" placeholder="Enter last 3 digits of period (e.g. 256)">
+    <input id="periodInput" type="text" maxlength="3" placeholder="Enter last 3 digits of period">
     <div style="margin-top:10px">
-      <button class="btn" id="predictBtn" onclick="getPrediction()">Get Prediction</button>
+      <button class="btn" onclick="getPrediction()">Get Prediction</button>
       <button class="btn ghost" onclick="markWin()">Win</button>
       <button class="btn ghost" onclick="markLoss()">Loss</button>
       <button class="btn ghost" onclick="resetSession()">Reset</button>
@@ -84,56 +81,46 @@
   </section>
 
 </div>
-
-<footer>Local demo — Admin approval removed. Payment confirmed automatically.</footer>
+<footer>Fully automated UPI payment & hack panel demo.</footer>
 
 <script>
 /* ---------- Config ---------- */
-const UPI_ID = 'perfect.k@ptaxis';
-const UPI_NAME = 'Sureshot';
+const UPI_ID='perfect.k@ptaxis';
 
 /* ---------- State ---------- */
-let currentPlan = 3000;
-let currentDeposit = 300;
-let balance = 0;
-let level = 1;
-let currentBet = 0;
-let history = [];
+let currentPlan=3000;
+let currentDeposit=300;
+let balance=0;
+let level=1;
+let currentBet=0;
+let history=[];
 
-/* ---------- DOM Refs ---------- */
-const screenDashboard = document.getElementById('screen-dashboard');
-const screenUser = document.getElementById('screen-user');
-const screenAccess = document.getElementById('screen-access');
-const plansList = document.getElementById('plansList');
-const qrImg = document.getElementById('qrImg');
-const userAmount = document.getElementById('userAmount');
-const paymentStatus = document.getElementById('paymentStatus');
-const targetRange = document.getElementById('targetRange');
-const balanceVal = document.getElementById('balanceVal');
-const historyBox = document.getElementById('historyBox');
-const predictionText = document.getElementById('predictionText');
+/* ---------- DOM ---------- */
+const screenDashboard=document.getElementById('screen-dashboard');
+const screenUser=document.getElementById('screen-user');
+const screenAccess=document.getElementById('screen-access');
+const plansList=document.getElementById('plansList');
+const qrImg=document.getElementById('qrImg');
+const userAmount=document.getElementById('userAmount');
+const paymentStatus=document.getElementById('paymentStatus');
+const targetRange=document.getElementById('targetRange');
+const balanceVal=document.getElementById('balanceVal');
+const historyBox=document.getElementById('historyBox');
+const predictionText=document.getElementById('predictionText');
 
 /* ---------- Plans ---------- */
-const plans = [
-  {loss:3000, price:299},
-  {loss:5000, price:399},
-  {loss:10000, price:499},
-  {loss:25000, price:899},
-  {loss:50000, price:1599},
-  {loss:100000, price:2499},
-  {loss:500000, price:9999}
+const plans=[
+  {loss:3000},{loss:5000},{loss:10000},{loss:25000},{loss:50000},{loss:100000},{loss:500000}
 ];
-
 function renderPlans(){
-  plansList.innerHTML = '';
+  plansList.innerHTML='';
   plans.forEach(p=>{
-    const deposit = Math.ceil(p.loss*0.10);
-    const div = document.createElement('div');
-    div.className = 'plan';
-    div.innerHTML = `<b>${p.loss} Loss</b>
-      <div class="small">Full plan price: ₹${p.price}</div>
-      <div style="margin-top:8px">Deposit (10%): <b>₹${deposit}</b></div>
-      <div style="margin-top:10px"><button class="btn" onclick="choosePlan(${p.loss}, ${deposit})">Choose plan</button></div>`;
+    const deposit=Math.ceil(p.loss*0.10);
+    const div=document.createElement('div');
+    div.className='plan';
+    div.innerHTML=`<b>${p.loss} Loss</b>
+      <div class="small">Deposit: ₹${deposit}</div>
+      <div style="margin-top:10px"><button class="btn" onclick="choosePlan(${p.loss},${deposit})">Choose Plan</button></div>`;
     plansList.appendChild(div);
   });
 }
@@ -149,79 +136,78 @@ function showScreen(id){
 }
 function goDashboard(){ showScreen('dashboard'); }
 
-/* ---------- Choose plan -> User screen ---------- */
-function choosePlan(planLoss, deposit){
-  currentPlan = planLoss;
-  currentDeposit = deposit;
+/* ---------- Choose plan ---------- */
+function choosePlan(plan,deposit){
+  currentPlan=plan;
+  currentDeposit=deposit;
   showScreen('user');
-  userAmount.innerText = '₹'+currentDeposit;
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_NAME)}&am=${encodeURIComponent(currentDeposit)}&cu=INR`;
-  qrImg.src = 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' + encodeURIComponent(upiUrl);
+  userAmount.innerText='₹'+currentDeposit;
+  qrImg.src='https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl='+
+    encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=Sureshot&am=${currentDeposit}&cu=INR`);
   paymentStatus.classList.add('hidden');
   document.getElementById('utrInput').value='';
   document.getElementById('screenshotInput').value='';
 }
 
-/* ---------- Process payment ---------- */
-function processPayment(){
-  const utr = document.getElementById('utrInput').value.trim();
-  const file = document.getElementById('screenshotInput').files[0];
-  if(!/^[0-9]{12}$/.test(utr)){ alert('Enter valid 12-digit UTR'); return; }
-  if(!file){ alert('Upload payment screenshot'); return; }
+/* ---------- Confirm Payment ---------- */
+function confirmPayment(){
+  const utr=document.getElementById('utrInput').value.trim();
+  const file=document.getElementById('screenshotInput').files[0];
+  if(!/^[0-9]{12}$/.test(utr)){ alert('Enter 12-digit UTR'); return; }
+  if(!file){ alert('Upload screenshot'); return; }
   paymentStatus.classList.remove('hidden');
-  paymentStatus.innerText = '⏳ Checking your payment...';
+  paymentStatus.innerText='⏳ Checking your payment...';
   setTimeout(()=>{
-    paymentStatus.innerText = '✅ Payment Successful!';
-    // go to hack panel
-    balance = currentDeposit;
-    level = 1;
-    currentBet = 0;
-    history = [];
+    paymentStatus.innerText='✅ Payment Successful!';
+    balance=currentDeposit;
+    level=1;
+    currentBet=0;
+    history=[];
     updateHackUI();
     showScreen('access');
-  }, 10000); // 10 sec simulated
+  },10000);
 }
 
-/* ---------- Hack Panel Logic ---------- */
-function calcBet(){
-  if(level===1) return Math.max(1, Math.round(balance*0.15));
-  if(level===2) return Math.max(1, Math.round(balance*0.30));
-  if(level===3) return Math.max(1, Math.round(balance*0.55));
+/* ---------- Hack Panel ---------- */
+function calcBet(){ if(level===1)return Math.max(1,Math.round(balance*0.15));
+  if(level===2)return Math.max(1,Math.round(balance*0.3));
+  if(level===3)return Math.max(1,Math.round(balance*0.55));
   return 0;
 }
 function getPrediction(){
-  const p = document.getElementById('periodInput').value.trim();
+  const p=document.getElementById('periodInput').value.trim();
   if(!/^[0-9]{3}$/.test(p)){ alert('Enter last 3 digits'); return; }
-  currentBet = calcBet();
-  const pred = Math.random()<0.5?'BIG':'SMALL';
-  predictionText.innerText = `Period ${p}: Prediction = ${pred} • Bet = ₹${currentBet} (Level ${level})`;
+  currentBet=calcBet();
+  const pred=Math.random()<0.5?'BIG':'SMALL';
+  predictionText.innerText=`Period ${p}: Prediction = ${pred} • Bet = ₹${currentBet} (Level ${level})`;
 }
 function markWin(){
   if(currentBet<=0){ alert('No active bet'); return; }
-  balance = Math.round(balance+currentBet);
-  history.unshift({time:new Date().toLocaleTimeString(), bet:currentBet, result:'WIN', level:level});
+  balance=Math.round(balance+currentBet);
+  history.unshift({time:new Date().toLocaleTimeString(),bet:currentBet,result:'WIN',level:level});
   currentBet=0; level=1; updateHackUI(); checkTarget();
 }
 function markLoss(){
   if(currentBet<=0){ alert('No active bet'); return; }
-  balance = Math.max(0, balance-currentBet);
-  history.unshift({time:new Date().toLocaleTimeString(), bet:currentBet, result:'LOSS', level:level});
-  level = (level<3)?level+1:1; currentBet=0; updateHackUI(); checkTarget();
+  balance=Math.max(0,balance-currentBet);
+  history.unshift({time:new Date().toLocaleTimeString(),bet:currentBet,result:'LOSS',level:level});
+  level=(level<3)?level+1:1;
+  currentBet=0; updateHackUI(); checkTarget();
 }
 function updateHackUI(){
-  balanceVal.innerText = balance;
-  targetRange.innerText = `₹${currentDeposit} to ₹${currentPlan}`;
-  historyBox.innerHTML = history.map(h=>`${h.time} — Bet ₹${h.bet} — ${h.result} (L${h.level})`).join('<br>');
+  balanceVal.innerText=balance;
+  targetRange.innerText=`${currentDeposit} to ${currentPlan}`;
+  historyBox.innerHTML=history.map(h=>`${h.time} — Bet ₹${h.bet} — ${h.result} (L${h.level})`).join('<br>');
+  predictionText.innerText=predictionText.innerText||'';
 }
 function resetSession(){
   if(!confirm('Reset session?')) return;
-  balance=currentDeposit; level=1; currentBet=0; history=[]; predictionText.innerText=''; document.getElementById('periodInput').value=''; updateHackUI();
+  balance=currentDeposit; level=1; currentBet=0; history=[];
+  predictionText.innerText='';
+  document.getElementById('periodInput').value='';
+  updateHackUI();
 }
-function checkTarget(){
-  if(balance>=currentPlan){
-    setTimeout(()=>{ alert('🎉 Congratulations — Your Target is Complete!'); showScreen('dashboard'); }, 200);
-  }
-}
+function checkTarget(){ if(balance>=currentPlan){ setTimeout(()=>{ alert('🎉 Congratulations — Target Complete!'); showScreen('dashboard'); },250); } }
 
 /* ---------- Init ---------- */
 renderPlans();
