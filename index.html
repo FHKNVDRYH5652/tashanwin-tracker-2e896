@@ -1,217 +1,640 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sureshot — Dashboard · Payment · Access</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Premium Predictor — Hacker UI (Wingo-style)</title>
+
+<!-- Chart.js (for charts) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Firebase (modular SDK via compat for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
 <style>
-  :root{--bg:#071022;--card:#0f1724;--muted:#9fb0d6;--accent1:#00d2a8;--accent2:#00a6ff;--success:#b8ffce;}
-  body{margin:0;font-family:Inter,Segoe UI,Arial;background:linear-gradient(180deg,#061021,#07142a);color:#eaf6ff;overflow-x:hidden;}
-  header{padding:18px;text-align:center;font-weight:800;font-size:1.3rem;letter-spacing:0.4px;animation:fadeDown 1s;}
-  .wrap{max-width:980px;margin:18px auto;padding:18px;animation:fadeIn 1s;}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(0,0,0,0.5);transition:all 0.4s ease;}
-  .card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,0.6);}
-  .hidden{display:none;}
-  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;}
-  .plan{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);text-align:left;transition:0.3s;}
-  .plan:hover{background:rgba(0,210,168,0.05);}
-  .plan b{display:block;font-size:1.05rem;}
-  .btn{padding:10px 14px;border-radius:9px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#012;font-weight:800;cursor:pointer;transition:0.3s;box-shadow:0 4px 10px rgba(0,0,0,0.5);}
-  .btn:hover{transform:scale(1.05);}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);}
-  input[type=text]{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;width:90%;text-align:center;margin-top:10px;transition:0.3s;}
-  input[type=file]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;width:90%;margin-top:10px;}
-  input:focus{border-color:var(--accent1);}
-  .qr{width:220px;height:220px;border-radius:12px;display:block;margin:12px auto;border:2px solid rgba(255,255,255,0.03);animation:fadeIn 1s;}
-  .status{margin-top:10px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);font-weight:700;transition:0.3s;}
-  .small{color:var(--muted);font-size:0.95rem;}
-  .history{margin-top:12px;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;max-height:260px;overflow:auto;}
-  footer{padding:14px;text-align:center;color:var(--muted);font-size:0.9rem;}
-  /* animations */
-  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes fadeDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+  /* PREMIUM DARK HACKER THEME */
+  :root{
+    --bg1: #0b0f1a;
+    --bg2: #071029;
+    --card: rgba(20,20,30,0.9);
+    --accent: linear-gradient(90deg,#7b61ff,#00e0a8);
+    --neon: #7b61ff;
+    --muted: #9fb0d6;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto, "Poppins",sans-serif}
+  body{
+    margin:0;
+    min-height:100vh;
+    color:#e9f7ff;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(123,97,255,0.08), transparent 10%),
+                radial-gradient(900px 400px at 90% 90%, rgba(0,224,168,0.06), transparent 10%),
+                linear-gradient(180deg,var(--bg1),var(--bg2));
+    -webkit-font-smoothing:antialiased;
+  }
+  .container{max-width:1100px;margin:28px auto;padding:18px;}
+  header{display:flex;align-items:center;gap:14px}
+  .logo{width:64px;height:64px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,0.06);background:#071026;display:flex;align-items:center;justify-content:center}
+  .logo img{width:100%;height:100%;object-fit:cover}
+  h1{margin:0;font-size:20px;letter-spacing:0.6px}
+  .subtitle{color:var(--muted);font-size:13px}
+
+  /* layout */
+  .grid{display:grid;grid-template-columns: 360px 1fr; gap:18px;margin-top:16px}
+  @media(max-width:980px){ .grid{grid-template-columns:1fr} }
+
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+  .muted{color:var(--muted);font-size:13px}
+
+  /* small UI */
+  label{display:block;font-size:13px;color:#cfe;border-bottom:1px solid transparent;margin-bottom:6px}
+  input[type="text"], select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  button{padding:10px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,#7b61ff,#00e0a8);color:#021;cursor:pointer;font-weight:800}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+  /* analysis box */
+  .analysis-box{background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+  .period{font-weight:900;font-size:18px;color:#fff}
+
+  /* hidden admin cross */
+  .admin-cross{
+    position:fixed;right:14px;bottom:14px;width:46px;height:46px;border-radius:10px;background:rgba(255,255,255,0.02);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;cursor:pointer;z-index:9999;opacity:0.7;
+    border:1px solid rgba(255,255,255,0.03)
+  }
+  .admin-cross:hover{transform:scale(1.04);opacity:1}
+
+  /* chart area */
+  #chartWrap{height:220px;padding:6px}
+  canvas{width:100%!important;height:220px!important}
+
+  /* prediction box */
+  .predict-large{display:flex;gap:12px;align-items:center}
+  .pred-card{flex:1;padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.25));border:1px solid rgba(255,255,255,0.03)}
+  .big{color:#7fe8a7;font-weight:900;font-size:18px}
+  .small{color:#ffb66b;font-weight:900;font-size:18px}
+  .confidence{font-weight:800;color:#bfe}
+
+  .log{font-family:monospace;background:rgba(0,0,0,0.25);padding:10px;border-radius:8px;height:120px;overflow:auto;font-size:13px;margin-top:10px;color:#cfe}
+
+  footer{margin-top:16px;color:var(--muted);text-align:center;font-size:13px}
+
+  /* loader */
+  .loader{
+    display:inline-block;width:12px;height:12px;border-radius:999px;margin-right:6px;background:linear-gradient(90deg,#7b61ff,#00e0a8);
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+
 </style>
 </head>
 <body>
-<header>Sureshot — Dashboard · Payment · Access</header>
-<div class="wrap">
+  <div class="container">
+    <header>
+      <div class="logo"><img id="logoImg" src="anime1.png" alt="logo"></div>
+      <div>
+        <h1>Premium Predictor</h1>
+        <div class="subtitle">Professional analysis · pattern & psychology based suggestions</div>
+      </div>
+    </header>
 
-  <!-- DASHBOARD -->
-  <section id="screen-dashboard" class="card">
-    <h2>Choose a Loss-Recovery Plan</h2>
-    <div class="small">Click a plan to go to payment. Deposit shown = 10% of plan.</div>
-    <div class="plans" id="plansList"></div>
-  </section>
+    <div class="grid">
+      <!-- LEFT: Controls / Payment / Admin -->
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0">Plan & Payment (choose plan → pay → submit UTR)</h3>
+          <div class="muted">Choose plan (each plan represents a Balance goal range)</div>
+          <div style="margin-top:10px">
+            <select id="planSelect">
+              <option value="100-300" data-price="40">100 → 300 (Price ₹40)</option>
+              <option value="200-1000" data-price="80">200 → 1000 (Price ₹80)</option>
+              <option value="500-5000" data-price="200">500 → 5000 (Price ₹200)</option>
+              <option value="1000-15000" data-price="350">1000 → 15000 (Price ₹350)</option>
+              <option value="2000-30000" data-price="600">2000 → 30000 (Price ₹600)</option>
+              <option value="1000-50000" data-price="1200">Premium: 1000 → 50000 (Price ₹1200)</option>
+            </select>
+          </div>
 
-  <!-- PAYMENT SCREEN -->
-  <section id="screen-user" class="card hidden">
-    <button class="btn ghost" onclick="goDashboard()" style="float:right">Back</button>
-    <h2>Scan & Pay — Enter UTR & Screenshot</h2>
-    <img id="qrImg" class="qr" alt="UPI QR Code">
-    <div class="small">Scan this QR with UPI app. Amount collected automatically.</div>
+          <div style="margin-top:12px">
+            <div class="muted">QR for Payment</div>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+              <img id="qrImg" src="qr.png" alt="qr" style="width:120px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
+              <div style="flex:1">
+                <div class="muted">Scan & pay the exact amount</div>
+                <div style="margin-top:6px"><b id="priceText">₹40</b></div>
+                <input id="utrInput" placeholder="Enter 12-digit UTR" maxlength="12" style="margin-top:8px"/>
+                <div style="margin-top:8px;display:flex;gap:8px">
+                  <button id="submitUtrBtn">Submit UTR</button>
+                  <button class="ghost" id="clearUtrBtn">Clear</button>
+                </div>
+                <div id="utrStatus" class="muted" style="margin-top:8px"></div>
+              </div>
+            </div>
+          </div>
 
-    <div style="margin-top:12px">
-      <div class="small">Deposit amount:</div>
-      <div id="userAmount" style="font-weight:800;font-size:1.3rem;margin-top:6px">₹0</div>
+          <div style="margin-top:12px" class="muted">Admin approvals & payments stored on Firebase (if configured).</div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin-top:0">Quick Controls</h3>
+          <div style="display:flex;gap:8px">
+            <button id="gotoPredictionBtn">Go to Prediction</button>
+            <button class="ghost" id="resetHistoryBtn">Reset History</button>
+          </div>
+          <div style="margin-top:12px" class="muted">Server: <span id="serverStatus">Connected</span></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin-top:0">Admin Panel (hidden)</h3>
+          <div class="muted">Click the ❌ bottom-right and enter password to open admin.</div>
+          <div id="adminBox" style="display:none;margin-top:10px">
+            <div class="muted">Pending UTRs (from local only in this demo)</div>
+            <div id="pendingList" style="margin-top:8px"></div>
+            <div style="margin-top:10px"><button id="adminRefresh">Refresh</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Prediction -->
+      <div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="muted">PERIOD</div>
+              <div class="period" id="periodDisplay">2025091500010000</div>
+            </div>
+            <div>
+              <div class="muted">Active Plan</div>
+              <div id="activePlanText">100 → 300</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="analysis-box">
+            <div style="display:flex;gap:12px;align-items:center">
+              <input id="manualPeriod" placeholder="Enter period (or leave blank)" style="flex:1" />
+              <button id="generateBtn">Generate Prediction</button>
+              <button id="autoIncBtn" class="ghost">Auto-inc ON</button>
+            </div>
+
+            <div style="margin-top:12px" class="predict-large">
+              <div class="pred-card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div>
+                    <div class="muted">Prediction</div>
+                    <div id="predictionLabel" style="font-size:22px;font-weight:900">--</div>
+                    <div class="muted" style="margin-top:6px">Confidence: <span id="confidenceText">--</span></div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="muted">Analysis</div>
+                    <div style="margin-top:6px;font-weight:800" id="analysisDecision">Waiting</div>
+                  </div>
+                </div>
+
+                <div class="log" id="analysisLog">Awaiting input. Enter period & click Generate.</div>
+
+                <div style="margin-top:10px;display:flex;gap:8px">
+                  <button id="markWinBtn" class="ghost">Mark Win</button>
+                  <button id="markLossBtn" class="ghost">Mark Loss</button>
+                </div>
+
+              </div>
+
+              <div style="width:320px">
+                <div class="analysis-box">
+                  <div class="muted">Chart & Frequency</div>
+                  <div id="chartWrap"><canvas id="freqChart"></canvas></div>
+                  <div style="margin-top:8px" class="muted" id="freqText">Big:0 • Small:0</div>
+                </div>
+
+                <div style="margin-top:12px" class="analysis-box">
+                  <div class="muted">Last results (latest first)</div>
+                  <div id="historyBox" style="margin-top:8px;font-family:monospace;font-size:13px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <footer>Design: Premium Hacker look • Background images: anime1.png / anime2.png / anime3.png</footer>
+      </div>
     </div>
 
-    <input id="utrInput" type="text" maxlength="12" placeholder="Enter 12-digit UTR">
-    <input id="screenshotInput" type="file" accept="image/*">
-    <div style="margin-top:8px">
-      <button class="btn" onclick="confirmPayment()">Confirm Payment</button>
-    </div>
-    <div id="paymentStatus" class="status hidden"></div>
-  </section>
-
-  <!-- ACCESS / HACK PANEL -->
-  <section id="screen-access" class="card hidden">
-    <h2>Hack Panel — Prediction</h2>
-    <p class="small">Target Range: <b id="targetRange"></b> | Balance: ₹<b id="balanceVal"></b></p>
-
-    <input id="periodInput" type="text" maxlength="3" placeholder="Enter last 3 digits of period">
-    <div style="margin-top:10px">
-      <button class="btn" onclick="getPrediction()">Get Prediction</button>
-      <button class="btn ghost" onclick="markWin()">Win</button>
-      <button class="btn ghost" onclick="markLoss()">Loss</button>
-      <button class="btn ghost" onclick="resetSession()">Reset</button>
-    </div>
-
-    <div id="predictionText" style="margin-top:12px;font-weight:800"></div>
-    <div class="history" id="historyBox"></div>
-  </section>
-
-</div>
-<footer>Fully automated UPI payment & hack panel demo.</footer>
+    <div class="admin-cross" id="adminCross">❌</div>
+  </div>
 
 <script>
-/* ---------- Config ---------- */
-const UPI_ID='perfect.k@ptaxis';
+/* ----------------------------
+  Premium Predictor — Single HTML
+  - Save as premium_predictor.html
+  - Replace assets: anime1.png, qr.png, music.m4a
+  - Firebase: terminal-xxrr config used below (you provided). If you don't want Firebase, it will still run locally.
+------------------------------*/
+
+/* ---------- Firebase init (compat) ---------- */
+let firebaseEnabled = false;
+try {
+  const firebaseConfig = {
+    apiKey: "AIzaSyBs7eQyMrcN8kJWMHl2ac2UZHlYQ6DypD8",
+    authDomain: "terminal-xxrr.firebaseapp.com",
+    databaseURL: "https://terminal-xxrr-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "terminal-xxrr",
+    storageBucket: "terminal-xxrr.firebasestorage.app",
+    messagingSenderId: "722753278120",
+    appId: "1:722753278120:web:bfa37aab39635a4e57f29d",
+    measurementId: "G-E3MZH3E1K5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  firebaseEnabled = true;
+  console.log('Firebase initialized');
+} catch(e){
+  console.warn('Firebase not available or initialization failed', e);
+  firebaseEnabled = false;
+}
 
 /* ---------- State ---------- */
-let currentPlan=3000;
-let currentDeposit=300;
-let balance=0;
-let level=1;
-let currentBet=0;
-let history=[];
+const DEFAULT_PERIOD = '2025091500010000';
+let autoInc = false;
+let currentPeriod = DEFAULT_PERIOD;
+let historyArr = []; // latest-first: ["Big","Small",...]
+const MAX_HISTORY = 50; // keep a larger pool
+const ADMIN_PASS = '456'; // as requested
 
-/* ---------- DOM ---------- */
-const screenDashboard=document.getElementById('screen-dashboard');
-const screenUser=document.getElementById('screen-user');
-const screenAccess=document.getElementById('screen-access');
-const plansList=document.getElementById('plansList');
-const qrImg=document.getElementById('qrImg');
-const userAmount=document.getElementById('userAmount');
-const paymentStatus=document.getElementById('paymentStatus');
-const targetRange=document.getElementById('targetRange');
-const balanceVal=document.getElementById('balanceVal');
-const historyBox=document.getElementById('historyBox');
-const predictionText=document.getElementById('predictionText');
+/* ---------- DOM refs ---------- */
+const planSelect = document.getElementById('planSelect');
+const priceText = document.getElementById('priceText');
+const qrImg = document.getElementById('qrImg');
+const utrInput = document.getElementById('utrInput');
+const submitUtrBtn = document.getElementById('submitUtrBtn');
+const utrStatus = document.getElementById('utrStatus');
+const gotoPredictionBtn = document.getElementById('gotoPredictionBtn');
+const resetHistoryBtn = document.getElementById('resetHistoryBtn');
+const periodDisplay = document.getElementById('periodDisplay');
+const manualPeriod = document.getElementById('manualPeriod');
+const generateBtn = document.getElementById('generateBtn');
+const predictionLabel = document.getElementById('predictionLabel');
+const confidenceText = document.getElementById('confidenceText');
+const analysisLog = document.getElementById('analysisLog');
+const analysisDecision = document.getElementById('analysisDecision');
+const markWinBtn = document.getElementById('markWinBtn');
+const markLossBtn = document.getElementById('markLossBtn');
+const historyBox = document.getElementById('historyBox');
+const freqText = document.getElementById('freqText');
+const adminCross = document.getElementById('adminCross');
+const adminBox = document.getElementById('adminBox');
+const pendingList = document.getElementById('pendingList');
+const adminRefresh = document.getElementById('adminRefresh');
+const serverStatus = document.getElementById('serverStatus');
+const autoIncBtn = document.getElementById('autoIncBtn');
+const activePlanText = document.getElementById('activePlanText');
 
-/* ---------- Plans ---------- */
-const plans=[
-  {loss:3000},{loss:5000},{loss:10000},{loss:25000},{loss:50000},{loss:100000},{loss:500000}
-];
-function renderPlans(){
-  plansList.innerHTML='';
-  plans.forEach(p=>{
-    const deposit=Math.ceil(p.loss*0.10);
-    const div=document.createElement('div');
-    div.className='plan';
-    div.innerHTML=`<b>${p.loss} Loss</b>
-      <div class="small">Deposit: ₹${deposit}</div>
-      <div style="margin-top:10px"><button class="btn" onclick="choosePlan(${p.loss},${deposit})">Choose Plan</button></div>`;
-    plansList.appendChild(div);
+/* ---------- Chart ---------- */
+let freqChart = null;
+function initChart(){
+  const ctx = document.getElementById('freqChart').getContext('2d');
+  freqChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Small','Big'],
+      datasets: [{
+        label: 'Frequency (recent 50)',
+        data: [0,0],
+        backgroundColor: ['#ffb66b','#7fe8a7'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true}}
+    }
   });
 }
+initChart();
 
-/* ---------- Navigation ---------- */
-function showScreen(id){
-  screenDashboard.classList.add('hidden');
-  screenUser.classList.add('hidden');
-  screenAccess.classList.add('hidden');
-  if(id==='dashboard') screenDashboard.classList.remove('hidden');
-  if(id==='user') screenUser.classList.remove('hidden');
-  if(id==='access') screenAccess.classList.remove('hidden');
+/* ---------- Helpers ---------- */
+function saveLocal(){
+  localStorage.setItem('pp_history', JSON.stringify(historyArr));
+  localStorage.setItem('pp_period', currentPeriod);
+  localStorage.setItem('pp_plan', planSelect.value);
 }
-function goDashboard(){ showScreen('dashboard'); }
-
-/* ---------- Choose plan ---------- */
-function choosePlan(plan,deposit){
-  currentPlan=plan;
-  currentDeposit=deposit;
-  showScreen('user');
-  userAmount.innerText='₹'+currentDeposit;
-  qrImg.src='https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl='+
-    encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=Sureshot&am=${currentDeposit}&cu=INR`);
-  paymentStatus.classList.add('hidden');
-  document.getElementById('utrInput').value='';
-  document.getElementById('screenshotInput').value='';
+function loadLocal(){
+  try{
+    historyArr = JSON.parse(localStorage.getItem('pp_history')||'[]');
+    currentPeriod = localStorage.getItem('pp_period') || DEFAULT_PERIOD;
+    const planVal = localStorage.getItem('pp_plan');
+    if(planVal) planSelect.value = planVal;
+  }catch(e){ historyArr = []; currentPeriod = DEFAULT_PERIOD; }
+  renderAll();
+}
+function updateChart(){
+  const small = historyArr.filter(x=>x==='Small').length;
+  const big = historyArr.filter(x=>x==='Big').length;
+  freqChart.data.datasets[0].data = [small,big];
+  freqChart.update();
+  freqText.textContent = `Big:${big} • Small:${small}`;
+}
+function renderHistory(){
+  const latest = historyArr.slice(0,10);
+  historyBox.innerHTML = latest.map((r,i)=>`${i+1}. ${r}`).join('<br>');
+}
+function renderAll(){
+  periodDisplay.textContent = currentPeriod;
+  priceText.textContent = '₹' + (planSelect.selectedOptions[0]?.dataset.price || '40');
+  activePlanText.textContent = planSelect.value;
+  renderHistory();
+  updateChart();
 }
 
-/* ---------- Confirm Payment ---------- */
-function confirmPayment(){
-  const utr=document.getElementById('utrInput').value.trim();
-  const file=document.getElementById('screenshotInput').files[0];
-  if(!/^[0-9]{12}$/.test(utr)){ alert('Enter 12-digit UTR'); return; }
-  if(!file){ alert('Upload screenshot'); return; }
-  paymentStatus.classList.remove('hidden');
-  paymentStatus.innerText='⏳ Checking your payment...';
+/* ---------- Prediction "deep analysis" ----------
+   Note: This is NOT magic; it's simulated multi-step analysis using last results:
+   - frequency
+   - longest run
+   - alternation ratio
+   - simple pattern detection (runs of 2-4)
+   - psychology: detect majority in small window and pick OPPOSITE with higher confidence
+   - confidence weighted by consistency (if >70% use)
+----------------------------------------------*/
+function analyzeAndPredict(){
+  // require some history to base analysis on: at least 6 recent ideally
+  const logLines = [];
+  logLines.push('Starting deep analysis...');
+  // take a snapshot of recent N
+  const recent = historyArr.slice(0, 30); // latest-first
+  logLines.push(`Recent count: ${recent.length}`);
+  if(recent.length < 6){
+    logLines.push('Not enough past results. Falling back to frequency-opposite heuristic.');
+  }
+
+  // frequency
+  const smallCount = recent.filter(x=>x==='Small').length;
+  const bigCount = recent.filter(x=>x==='Big').length;
+  const total = Math.max(1, recent.length);
+  const smallPerc = Math.round((smallCount/total)*100);
+  const bigPerc = Math.round((bigCount/total)*100);
+  logLines.push(`Frequency (recent ${total}): Small ${smallPerc}% • Big ${bigPerc}%`);
+
+  // runs
+  let longestRunSmall=0, longestRunBig=0, curRun=1;
+  for(let i=0;i<recent.length-1;i++){
+    if(recent[i]===recent[i+1]) curRun++; else { 
+      if(recent[i] === 'Small') longestRunSmall = Math.max(longestRunSmall, curRun);
+      else longestRunBig = Math.max(longestRunBig, curRun);
+      curRun = 1;
+    }
+  }
+  // finalize last
+  if(recent[recent.length-1] === 'Small') longestRunSmall = Math.max(longestRunSmall, curRun);
+  else longestRunBig = Math.max(longestRunBig, curRun);
+  logLines.push(`Longest runs: Small ${longestRunSmall} • Big ${longestRunBig}`);
+
+  // alternation analysis (how often changes)
+  let changes = 0;
+  for(let i=0;i<recent.length-1;i++) if(recent[i] !== recent[i+1]) changes++;
+  const alternation = Math.round((changes/Math.max(1,recent.length-1))*100);
+  logLines.push(`Alternation rate: ${alternation}% (higher = zig-zag patterns)`);
+
+  // pattern detection (detect repeating blocks of length 2..4)
+  const patternScores = {};
+  for(let L=2;L<=4;L++){
+    patternScores[L] = 0;
+    for(let i=0;i+L*2<=recent.length;i++){
+      const block = recent.slice(i,i+L).join(',');
+      const next = recent.slice(i+L,i+L*2).join(',');
+      if(block === next) patternScores[L] += 1;
+    }
+  }
+  logLines.push(`Pattern matches (2..4): ${JSON.stringify(patternScores)}`);
+
+  // psychology heuristic: assume majority-liking side has more bets; we pick opposite
+  // but we increase confidence only if majority is strong or patterns justify
+  const majoritySide = bigCount > smallCount ? 'Big' : (smallCount > bigCount ? 'Small' : 'None');
+  let baseConfidence = 50;
+  if(majoritySide === 'None') baseConfidence = 52;
+  else {
+    const diff = Math.abs(bigCount - smallCount);
+    baseConfidence = 50 + Math.min(40, Math.round((diff/Math.max(1,total))*100 * 0.4)); // diff weight
+  }
+  logLines.push(`Majority side: ${majoritySide} • baseConfidence: ${baseConfidence}%`);
+
+  // if alternation high -> lower confidence
+  if(alternation > 70) { baseConfidence -= 15; logLines.push('High alternation detected => reduce confidence'); }
+  // if long runs present -> adjust
+  if(longestRunBig >=4 || longestRunSmall >=4) { baseConfidence += 10; logLines.push('Long run detected => increase confidence'); }
+
+  // pattern boost
+  const patternBoost = (patternScores[2]||0)*5 + (patternScores[3]||0)*8;
+  baseConfidence = Math.min(95, baseConfidence + patternBoost);
+  logLines.push(`Pattern boost: ${patternBoost} => confidence now ${baseConfidence}%`);
+
+  // Final decision: choose opposite of majority (psychology), unless patterns indicate continuation
+  let decision = 'Small';
+  if(majoritySide === 'None') {
+    // pick side by latest last item or frequency
+    decision = recent[0] === 'Small' ? 'Big' : 'Small';
+    logLines.push('No clear majority; choose opposite of last result.');
+  } else {
+    // if pattern matches suggest continuation, follow majority; otherwise take opposite
+    const continuationEvidence = (patternScores[2] + patternScores[3] + patternScores[4]) > 1;
+    if(continuationEvidence && (majoritySide === recent[0])) {
+      // if continuation and majority equals last, follow majority
+      decision = majoritySide;
+      logLines.push('Pattern evidence suggests continuation; following majority.');
+    } else {
+      decision = majoritySide === 'Big' ? 'Small' : 'Big';
+      logLines.push('Choosing opposite of perceived majority (psychology strategy).');
+    }
+  }
+
+  // final confidence adjustments
+  let finalConfidence = Math.max(35, baseConfidence);
+  // if recent length small, drop confidence
+  if(total < 8) finalConfidence = Math.max(30, Math.round(finalConfidence*0.7));
+  if(alternation > 80) finalConfidence = Math.min(finalConfidence, 60);
+
+  // assemble analysis summary
+  const analysisSummary = {
+    decision,
+    confidence: finalConfidence,
+    details: logLines
+  };
+  return analysisSummary;
+}
+
+/* ---------- Simulate "deep" analysis with loader ---------- */
+function runDeepAnalysisThenPredict(){
+  // clear UI & show loader
+  analysisLog.innerHTML = '<div style="display:flex;align-items:center"><div class="loader"></div>Running deep analysis... (this simulates many checks)</div>';
+  predictionLabel.textContent = '--';
+  confidenceText.textContent = '--';
+  analysisDecision.textContent = 'Analyzing';
+
+  // simulate delay 8..14 seconds
+  const delay = 8000 + Math.floor(Math.random()*7000);
   setTimeout(()=>{
-    paymentStatus.innerText='✅ Payment Successful!';
-    balance=currentDeposit;
-    level=1;
-    currentBet=0;
-    history=[];
-    updateHackUI();
-    showScreen('access');
-  },10000);
+    const out = analyzeAndPredict();
+    // update UI
+    predictionLabel.textContent = out.decision;
+    confidenceText.textContent = out.confidence + '%';
+    analysisDecision.textContent = out.decision + ' • ' + out.confidence + '%';
+    analysisLog.innerHTML = out.details.map(l=>`${new Date().toLocaleTimeString()} • ${l}`).join('<br>');
+  }, delay);
 }
 
-/* ---------- Hack Panel ---------- */
-function calcBet(){ if(level===1)return Math.max(1,Math.round(balance*0.15));
-  if(level===2)return Math.max(1,Math.round(balance*0.3));
-  if(level===3)return Math.max(1,Math.round(balance*0.55));
-  return 0;
+/* ---------- Period increment helper ----------
+   Period structure in user's examples looks like: YYYYMMDD + some + sequence.
+   We'll implement simple numeric increment of the last digits string.
+--------------------------------------------*/
+function incrementPeriod(p){
+  // find trailing numeric sequence (take last 5-6-7 digits)
+  // simple approach: treat whole as number string and increment by 1
+  try{
+    const num = BigInt(p);
+    return (num + 1n).toString();
+  }catch(e){
+    // fallback: try increment last 4 digits
+    const base = p.slice(0, -4);
+    const tail = parseInt(p.slice(-4)) || 0;
+    return base + String((tail+1)).padStart(4,'0');
+  }
 }
-function getPrediction(){
-  const p=document.getElementById('periodInput').value.trim();
-  if(!/^[0-9]{3}$/.test(p)){ alert('Enter last 3 digits'); return; }
-  currentBet=calcBet();
-  const pred=Math.random()<0.5?'BIG':'SMALL';
-  predictionText.innerText=`Period ${p}: Prediction = ${pred} • Bet = ₹${currentBet} (Level ${level})`;
+
+/* ---------- Event handlers ---------- */
+planSelect.addEventListener('change', ()=>{
+  priceText.textContent = '₹' + (planSelect.selectedOptions[0]?.dataset.price || '40');
+  activePlanText.textContent = planSelect.value;
+  saveLocal();
+});
+
+submitUtrBtn.addEventListener('click', async ()=>{
+  const utr = utrInput.value.trim();
+  if(!/^\d{12}$/.test(utr)){ utrStatus.textContent = 'Enter valid 12-digit UTR'; return; }
+  utrStatus.textContent = 'Submitting...';
+  const payload = {
+    utr, plan: planSelect.value, price: planSelect.selectedOptions[0]?.dataset.price || '40', ts: Date.now()
+  };
+  // store locally
+  const pending = JSON.parse(localStorage.getItem('pp_pending')||'[]');
+  pending.unshift(payload);
+  localStorage.setItem('pp_pending', JSON.stringify(pending));
+  utrStatus.textContent = 'Submitted locally. Await admin approval. (Demo)';
+  // optionally send to Firebase
+  if(firebaseEnabled){
+    try {
+      const ref = firebase.database().ref('payments').push();
+      await ref.set(payload);
+      utrStatus.textContent = 'Submitted to Firebase. Await admin approval.';
+    } catch(err) {
+      console.warn('Firebase submit failed', err);
+    }
+  }
+});
+
+resetHistoryBtn.addEventListener('click', ()=>{
+  if(!confirm('Reset all saved history?')) return;
+  historyArr = [];
+  saveLocal();
+  renderAll();
+});
+
+generateBtn.addEventListener('click', ()=>{
+  // set period
+  const manual = manualPeriod.value.trim();
+  if(manual) currentPeriod = manual;
+  // run deep analysis
+  runDeepAnalysisThenPredict();
+  // auto-increment toggle: after prediction, increment period
+  if(autoInc) currentPeriod = incrementPeriod(currentPeriod);
+  periodDisplay.textContent = currentPeriod;
+  saveLocal();
+});
+
+markWinBtn.addEventListener('click', ()=>{
+  const pred = predictionLabel.textContent;
+  if(!pred || pred==='--'){ alert('Generate prediction first'); return; }
+  // push result as actual prediction outcome (user marks Win / Loss)
+  // If user marks Win -> append pred to history (as actual result)
+  historyArr.unshift(pred);
+  if(historyArr.length > MAX_HISTORY) historyArr.pop();
+  saveLocal();
+  renderAll();
+});
+
+markLossBtn.addEventListener('click', ()=>{
+  const pred = predictionLabel.textContent;
+  if(!pred || pred==='--'){ alert('Generate prediction first'); return; }
+  // If user marks Loss -> append opposite side as actual result
+  const actual = pred === 'Big' ? 'Small' : 'Big';
+  historyArr.unshift(actual);
+  if(historyArr.length > MAX_HISTORY) historyArr.pop();
+  saveLocal();
+  renderAll();
+});
+
+gotoPredictionBtn.addEventListener('click', ()=>{ window.scrollTo({top:0,behavior:'smooth'}); });
+
+adminCross.addEventListener('click', ()=>{
+  const pw = prompt('Enter admin password');
+  if(pw === null) return;
+  if(pw === ADMIN_PASS){
+    document.getElementById('adminBox').style.display = 'block';
+    renderPending();
+  } else { alert('Wrong password'); }
+});
+
+adminRefresh.addEventListener('click', renderPending);
+
+autoIncBtn.addEventListener('click', ()=>{
+  autoInc = !autoInc;
+  autoIncBtn.textContent = autoInc ? 'Auto-inc ON' : 'Auto-inc OFF';
+  autoIncBtn.classList.toggle('ghost', !autoInc);
+});
+
+/* ---------- Pending UTR rendering ---------- */
+function renderPending(){
+  const pending = JSON.parse(localStorage.getItem('pp_pending')||'[]');
+  if(pending.length===0){ pendingList.innerHTML = '<div class="muted">No pending local UTRs</div>'; return; }
+  pendingList.innerHTML = pending.map((p,i)=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:13px"><strong>${p.utr}</strong><div style="color:#bbb;font-size:12px">${p.plan} • ₹${p.price}</div></div>
+    <div><button onclick="approveLocal(${i})">Approve</button><button onclick="rejectLocal(${i})" class="ghost" style="margin-left:6px">Reject</button></div>
+  </div>`).join('');
 }
-function markWin(){
-  if(currentBet<=0){ alert('No active bet'); return; }
-  balance=Math.round(balance+currentBet);
-  history.unshift({time:new Date().toLocaleTimeString(),bet:currentBet,result:'WIN',level:level});
-  currentBet=0; level=1; updateHackUI(); checkTarget();
+window.approveLocal = function(i){
+  const pending = JSON.parse(localStorage.getItem('pp_pending')||'[]');
+  const item = pending.splice(i,1)[0];
+  localStorage.setItem('pp_pending', JSON.stringify(pending));
+  // store approved record; in real app you'd update DB
+  const approved = JSON.parse(localStorage.getItem('pp_approved')||'[]');
+  approved.unshift({...item, approvedAt: Date.now()});
+  localStorage.setItem('pp_approved', JSON.stringify(approved));
+  alert('Approved locally (demo). For Firebase approvals, implement server-side check.');
+  renderPending();
 }
-function markLoss(){
-  if(currentBet<=0){ alert('No active bet'); return; }
-  balance=Math.max(0,balance-currentBet);
-  history.unshift({time:new Date().toLocaleTimeString(),bet:currentBet,result:'LOSS',level:level});
-  level=(level<3)?level+1:1;
-  currentBet=0; updateHackUI(); checkTarget();
+window.rejectLocal = function(i){
+  const pending = JSON.parse(localStorage.getItem('pp_pending')||'[]');
+  pending.splice(i,1);
+  localStorage.setItem('pp_pending', JSON.stringify(pending));
+  renderPending();
 }
-function updateHackUI(){
-  balanceVal.innerText=balance;
-  targetRange.innerText=`${currentDeposit} to ${currentPlan}`;
-  historyBox.innerHTML=history.map(h=>`${h.time} — Bet ₹${h.bet} — ${h.result} (L${h.level})`).join('<br>');
-  predictionText.innerText=predictionText.innerText||'';
+
+/* ---------- Misc ---------- */
+function autoPeriodStart(){
+  // if period not set, set to default
+  if(!currentPeriod) currentPeriod = DEFAULT_PERIOD;
+  periodDisplay.textContent = currentPeriod;
 }
-function resetSession(){
-  if(!confirm('Reset session?')) return;
-  balance=currentDeposit; level=1; currentBet=0; history=[];
-  predictionText.innerText='';
-  document.getElementById('periodInput').value='';
-  updateHackUI();
-}
-function checkTarget(){ if(balance>=currentPlan){ setTimeout(()=>{ alert('🎉 Congratulations — Target Complete!'); showScreen('dashboard'); },250); } }
 
 /* ---------- Init ---------- */
-renderPlans();
-showScreen('dashboard');
+loadLocal();
+autoPeriodStart();
+
+/* update UI periodically */
+setInterval(()=> {
+  renderAll();
+}, 2000);
+
 </script>
 </body>
 </html>
